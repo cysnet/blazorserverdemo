@@ -31,46 +31,47 @@
     <div class="content-wrapper">
         <div class="row">
             <div id="container">
-                <SfGrid DataSource="@Products" EnableHeaderFocus="true" AllowGrouping="true"
+                <SfGrid @ref="Grid" DataSource="@Products" EnableHeaderFocus="true" AllowGrouping="true"
                         AllowSelection="true" AllowSorting="true" AllowFiltering="true"
-                        EnableVirtualization="true" EnableHover="false" Height="600" RowHeight="38">
+                        EnableVirtualization="true" EnableHover="false" Height="600" RowHeight="38"
+                Toolbar="@(new List<string>() { "Add"})">
                     <GridGroupSettings Columns="@GroupedColumns"></GridGroupSettings>
                     <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
                     <GridPageSettings PageSize="40"></GridPageSettings>
                     <GridSelectionSettings CheckboxOnly="true" PersistSelection="true" Type="SelectionType.Multiple"></GridSelectionSettings>
                     <GridEditSettings AllowAdding="true" AllowDeleting="true" AllowEditing="true" Mode="EditMode.Dialog">
-                       @* <Template>
+                        @* <Template>
                             @{
-                                var product = (context as ProductDto);
-                                <div>
+                            var product = (context as ProductDto);
+                            <div>
 
-                                    <div class="mb-4">
-                                        <label>ProductName</label>
-                                        <SfTextBox ID="ProductName" @bind-Value="@(product.ProductName)"></SfTextBox>
-                                    </div>
-                                    <div class="mb-4">
-                                        <label>UnitPrice</label>
-                                        <SfNumericTextBox ID="UnitPrice" @bind-Value="@(product.UnitPrice)"></SfNumericTextBox>
-                                    </div>
-                                    <div class="mb-4">
-                                        <label>Category</label>
-                                        <SfDropDownList ID="Category" @bind-Value="@(product.CategoryId)"  TItem="CategoryDto" TValue="int?" DataSource="@Categories">
-                                          <DropDownListFieldSettings Value="CategoryId" Text="CategoryName"></DropDownListFieldSettings>
-                                        </SfDropDownList>
-                                    </div>
-                                     <div class="mb-4">
-                                        <label>UnitsInStock</label>
-                                        <SfNumericTextBox ID="UnitsInStock" @bind-Value="@(product.UnitsInStock)"></SfNumericTextBox>
-                                    </div>
-                                     <div class="mb-4">
-                                        <label>QuantityPerUnit</label>
-                                        <SfTextBox ID="QuantityPerUnit" @bind-Value="@(product.QuantityPerUnit)"></SfTextBox>
-                                    </div>
-                                </div>
+                            <div class="mb-4">
+                            <label>ProductName</label>
+                            <SfTextBox ID="ProductName" @bind-Value="@(product.ProductName)"></SfTextBox>
+                            </div>
+                            <div class="mb-4">
+                            <label>UnitPrice</label>
+                            <SfNumericTextBox ID="UnitPrice" @bind-Value="@(product.UnitPrice)"></SfNumericTextBox>
+                            </div>
+                            <div class="mb-4">
+                            <label>Category</label>
+                            <SfDropDownList ID="Category" @bind-Value="@(product.CategoryId)"  TItem="CategoryDto" TValue="int?" DataSource="@Categories">
+                            <DropDownListFieldSettings Value="CategoryId" Text="CategoryName"></DropDownListFieldSettings>
+                            </SfDropDownList>
+                            </div>
+                            <div class="mb-4">
+                            <label>UnitsInStock</label>
+                            <SfNumericTextBox ID="UnitsInStock" @bind-Value="@(product.UnitsInStock)"></SfNumericTextBox>
+                            </div>
+                            <div class="mb-4">
+                            <label>QuantityPerUnit</label>
+                            <SfTextBox ID="QuantityPerUnit" @bind-Value="@(product.QuantityPerUnit)"></SfTextBox>
+                            </div>
+                            </div>
                             }
-                        </Template>*@
+                            </Template>*@
                     </GridEditSettings>
-                    <GridEvents OnActionBegin="ActionBeginHandler" OnActionComplete="ActionCompleteHandler" TValue="ProductDto"></GridEvents>
+                    <GridEvents OnActionBegin="ActionBeginHandler" TValue="ProductDto"></GridEvents>
                     <GridColumns>
                         <GridColumn Type="ColumnType.CheckBox" AllowFiltering="false" AllowSorting="false" Width="60"></GridColumn>
                         <GridColumn Field=@nameof(ProductDto.ProductName) HeaderText="ProductName" Width="130"></GridColumn>
@@ -166,6 +167,7 @@
 </div>
 
 @code {
+    SfGrid<ProductDto> Grid { get; set; }
     public string[] GroupedColumns = new string[] { "CategoryName" };
     SfSpinner SpinnerObj;
 
@@ -197,18 +199,15 @@
             else
             {
                 ProductService.UpdateProduct(Args.Data);
+                
             }
+             Grid.CloseEditAsync();
+            LoadData();
         }
         if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Delete))
         {
             ProductService.DeleteProduct(Args.Data);
-        }
-    }
-    public void ActionCompleteHandler(ActionEventArgs<ProductDto> Args)
-    {
-        if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
-        {
-            LoadData(); //to fetch the updated data from db to Grid
+            LoadData();
         }
     }
 }
