@@ -18,4 +18,21 @@
     <ProjectReference Include="..\CommonLib\CommonLib.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="Resources\TelerikMessages.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>TelerikMessages.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Resources\TelerikMessages.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\TelerikMessages.zh-CN.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+
 </Project>
