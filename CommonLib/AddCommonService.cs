@@ -10,9 +10,9 @@ namespace CommonLib
 {
     public static class AddCommonService
     {
-        public static void AddCommonLibService(this IServiceCollection services)
+        public static void AddCommonLibService(this IServiceCollection services, string db = "Product.db")
         {
-            services.AddDbContext<ProductDbContext>(options => options.UseSqlite("Data Source=Product.db"));
+            services.AddDbContext<ProductDbContext>(options => options.UseSqlite("Data Source=" + db));
             services.AddScoped<ProductService>();
             services.AddScoped<CategoryService>();
         }

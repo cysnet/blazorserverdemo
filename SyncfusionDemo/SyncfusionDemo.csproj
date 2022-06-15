@@ -10,4 +10,8 @@
     <PackageReference Include="Syncfusion.Blazor" Version="20.1.0.60" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\CommonLib\CommonLib.csproj" />
+  </ItemGroup>
+
 </Project>

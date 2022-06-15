@@ -1,3 +1,4 @@
+using CommonLib;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Syncfusion.Blazor;
@@ -10,6 +11,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddSyncfusionBlazor(options => { options.IgnoreScriptIsolation = true; });
+builder.Services.AddCommonLibService("../TelerikDemo/Product.db");
 var app = builder.Build();
 Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("NjQxNDU3QDMyMzAyZTMxMmUzMEh5T3lNZnB4Q25vWThtRGpvWkloSkJVVm1pVUVZMzgrVEtzNGsxVjJZdG89");
 

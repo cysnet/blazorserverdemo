@@ -1,0 +1,251 @@
+﻿@page "/datagrid/overview"
+@using CommonLib
+@using CommonLib.Models
+@using Syncfusion.Blazor.Grids
+@using Syncfusion.Blazor.Inputs
+@using Syncfusion.Blazor.ProgressBar
+@using Syncfusion.Blazor.Spinner
+@using Syncfusion.Blazor.DropDowns
+@using System;
+@inject Microsoft.AspNetCore.Components.NavigationManager UriHelper
+@inject ProductService ProductService
+@inject CategoryService CategoryService
+
+@*
+    CUD             https://blazor.syncfusion.com/documentation/datagrid/editing
+    ConfirmDelete   https://docs.telerik.com/blazor-ui/components/grid/editing/built-in-dialogs/delete-confirmation
+    Pageable        https://docs.telerik.com/blazor-ui/components/grid/paging
+    Groupable       https://docs.telerik.com/blazor-ui/components/grid/grouping/overview
+    Sortable        https://docs.telerik.com/blazor-ui/components/grid/sorting
+    FilterMode      https://docs.telerik.com/blazor-ui/components/grid/filter/overview
+    Resizable       https://docs.telerik.com/blazor-ui/components/grid/columns/resize
+    Reorderable     https://docs.telerik.com/blazor-ui/components/grid/columns/reorder
+    SelectionMode   https://docs.telerik.com/blazor-ui/components/grid/selection/overview
+    OnStateInit     https://docs.telerik.com/blazor-ui/components/grid/state
+    Template        https://docs.telerik.com/blazor-ui/components/grid/templates/column
+    Globalization   https://docs.telerik.com/blazor-ui/globalization/localization
+
+*@
+
+<div class="col-lg-12 control-section">
+    <div class="content-wrapper">
+        <div class="row">
+            <div id="container">
+                <SfGrid DataSource="@Products" EnableHeaderFocus="true" AllowGrouping="true"
+                        AllowSelection="true" AllowSorting="true" AllowFiltering="true"
+                        EnableVirtualization="true" EnableHover="false" Height="600" RowHeight="38">
+                    <GridGroupSettings Columns="@GroupedColumns"></GridGroupSettings>
+                    <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
+                    <GridPageSettings PageSize="40"></GridPageSettings>
+                    <GridSelectionSettings CheckboxOnly="true" PersistSelection="true" Type="SelectionType.Multiple"></GridSelectionSettings>
+                    <GridEditSettings AllowAdding="true" AllowDeleting="true" AllowEditing="true" Mode="EditMode.Dialog">
+                       @* <Template>
+                            @{
+                                var product = (context as ProductDto);
+                                <div>
+
+                                    <div class="mb-4">
+                                        <label>ProductName</label>
+                                        <SfTextBox ID="ProductName" @bind-Value="@(product.ProductName)"></SfTextBox>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label>UnitPrice</label>
+                                        <SfNumericTextBox ID="UnitPrice" @bind-Value="@(product.UnitPrice)"></SfNumericTextBox>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label>Category</label>
+                                        <SfDropDownList ID="Category" @bind-Value="@(product.CategoryId)"  TItem="CategoryDto" TValue="int?" DataSource="@Categories">
+                                          <DropDownListFieldSettings Value="CategoryId" Text="CategoryName"></DropDownListFieldSettings>
+                                        </SfDropDownList>
+                                    </div>
+                                     <div class="mb-4">
+                                        <label>UnitsInStock</label>
+                                        <SfNumericTextBox ID="UnitsInStock" @bind-Value="@(product.UnitsInStock)"></SfNumericTextBox>
+                                    </div>
+                                     <div class="mb-4">
+                                        <label>QuantityPerUnit</label>
+                                        <SfTextBox ID="QuantityPerUnit" @bind-Value="@(product.QuantityPerUnit)"></SfTextBox>
+                                    </div>
+                                </div>
+                            }
+                        </Template>*@
+                    </GridEditSettings>
+                    <GridEvents OnActionBegin="ActionBeginHandler" OnActionComplete="ActionCompleteHandler" TValue="ProductDto"></GridEvents>
+                    <GridColumns>
+                        <GridColumn Type="ColumnType.CheckBox" AllowFiltering="false" AllowSorting="false" Width="60"></GridColumn>
+                        <GridColumn Field=@nameof(ProductDto.ProductName) HeaderText="ProductName" Width="130"></GridColumn>
+                        <GridColumn Field=@nameof(ProductDto.UnitPrice) HeaderText="UnitPrice" Width="200" ClipMode="ClipMode.EllipsisWithTooltip">
+                            <Template>
+                                @((context as ProductDto).UnitPrice.GetValueOrDefault().ToString("C2"))
+                            </Template>
+                        </GridColumn>
+                        <GridColumn Field=@nameof(ProductDto.Discontinued) Width="140">
+                            <Template>
+                                @{
+                                    var product = context as ProductDto;
+                                    if (!product.Discontinued.GetValueOrDefault())
+                                    {
+                                        <div class="statustemp e-activecolor">
+                                            <span class="statustxt e-activecolor">Available</span>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="statustemp e-inactivecolor">
+                                            <span class="statustxt e-inactivecolor">Discontinued</span>
+                                        </div>
+                                    }
+                                }
+                            </Template>
+                        </GridColumn>
+                        <GridColumn Field=@nameof(ProductDto.CategoryName) FilterSettings="new FilterSettings{Type = Syncfusion.Blazor.Grids.FilterType.CheckBox}" HeaderText="CategoryName" Width="130">
+                            <EditTemplate>
+                                @{
+                                    <SfDropDownList ID="Category" @bind-Value="@((context as ProductDto).CategoryId)" TItem="CategoryDto" TValue="int?" DataSource="@Categories">
+                                        <DropDownListFieldSettings Value="CategoryId" Text="CategoryName"></DropDownListFieldSettings>
+                                    </SfDropDownList>
+                                }
+                            </EditTemplate>
+                        </GridColumn>
+                        <GridColumn Field=@nameof(ProductDto.UnitsInStock) HeaderText="UnitsInStock" Width="130">
+                            <Template>
+                                @{
+                                    var product = context as ProductDto;
+                                    var value = product.UnitsInStock.GetValueOrDefault();
+                                }
+
+                                @{
+                                    if (value > 125)
+                                    {
+                                        <SfProgressBar Type="ProgressType.Linear" Height="40"
+                                               Width="100%" ID="Acutal"
+                                               TrackThickness="24"
+                                               ProgressThickness="24" Role="ModeType.Warning"
+                                               ShowProgressValue="true"
+                                               Value="value" Minimum="0" Maximum="125"
+                                               Theme="@Theme.Bootstrap5"
+                                               TrackColor="#969696">
+                                            <ProgressBarLabelStyle Text="Over 125 in stock" TextAlignment="TextAlignmentType.Center" Color="#FFFFFF" />
+                                        </SfProgressBar>
+                                    }
+                                    else
+                                    {
+                                        <SfProgressBar Type="ProgressType.Linear" Height="40"
+                                               Width="100%" ID="Acutal"
+                                               TrackThickness="24"
+                                               ProgressThickness="24" Role="ModeType.Warning"
+                                               ShowProgressValue="true"
+                                               Value="value" Minimum="0" Maximum="125"
+                                               Theme="@Theme.Bootstrap5"
+                                               TrackColor="#969696">
+                                            <ProgressBarLabelStyle Text="@(value+"")" TextAlignment="TextAlignmentType.Center" Color="#000000" />
+                                        </SfProgressBar>
+
+                                    }
+                                }
+
+
+                            </Template>
+
+                        </GridColumn>
+                        <GridColumn Field=@nameof(ProductDto.QuantityPerUnit) HeaderText="QuantityPerUnit" Width="130"></GridColumn>
+                        <GridColumn HeaderText="Manage Records" Width="150">
+                            <GridCommandColumns>
+                                <GridCommandColumn Type="CommandButtonType.Edit" ButtonOption="@(new CommandButtonOptions() {IconCss="e-icons e-edit", CssClass="e-flat" })"></GridCommandColumn>
+                                <GridCommandColumn Type="CommandButtonType.Delete" ButtonOption="@(new CommandButtonOptions() {IconCss="e-icons e-delete", CssClass="e-flat" })"></GridCommandColumn>
+                                <GridCommandColumn Type="CommandButtonType.Save" ButtonOption="@(new CommandButtonOptions() {IconCss="e-icons e-save", CssClass="e-flat" })"></GridCommandColumn>
+                                <GridCommandColumn Type="CommandButtonType.Cancel" ButtonOption="@(new CommandButtonOptions() {IconCss="e-icons e-cancel-icon", CssClass="e-flat" })"></GridCommandColumn>
+                            </GridCommandColumns>
+                        </GridColumn>
+                    </GridColumns>
+                </SfGrid>
+                <SfSpinner @ref="@SpinnerObj"></SfSpinner>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    public string[] GroupedColumns = new string[] { "CategoryName" };
+    SfSpinner SpinnerObj;
+
+    private int? index { get; set; } = 0;
+    private int? PreviousIndex { get; set; } = 0;
+
+    public List<ProductDto> Products { get; set; }
+    public List<CategoryDto> Categories { get; set; }
+
+    protected override void OnInitialized()
+    {
+        LoadData();
+    }
+
+    private void LoadData()
+    {
+        Products = ProductService.GetProducts().ToList();
+        Categories = CategoryService.GetCategories()?.ToList();
+    }
+
+    public void ActionBeginHandler(ActionEventArgs<ProductDto> Args)
+    {
+        if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
+        {
+            if (Args.Action == "Add")
+            {
+                ProductService.CreateProduct(Args.Data);
+            }
+            else
+            {
+                ProductService.UpdateProduct(Args.Data);
+            }
+        }
+        if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Delete))
+        {
+            ProductService.DeleteProduct(Args.Data);
+        }
+    }
+    public void ActionCompleteHandler(ActionEventArgs<ProductDto> Args)
+    {
+        if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
+        {
+            LoadData(); //to fetch the updated data from db to Grid
+        }
+    }
+}
+
+<style>
+    .statustemp.e-activecolor {
+        background-color: #ccffcc;
+    }
+
+    [class*=' e-'] {
+        box-sizing: border-box;
+    }
+
+    .statustemp {
+        position: relative;
+        height: 19px;
+        border-radius: 5px;
+        text-align: center;
+    }
+
+    div {
+        display: block;
+    }
+
+    td.e-rowcell .statustxt.e-activecolor {
+        color: #00cc00;
+        position: relative;
+        top: 9px;
+    }
+
+    .statustemp.e-inactivecolor {
+        background-color: #ffd7cc;
+    }
+
+    td.e-rowcell .statustxt.e-inactivecolor {
+        color: #e60000;
+        position: relative;
+        top: 9px;
+    }
+</style>
