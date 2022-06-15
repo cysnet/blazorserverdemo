@@ -1,0 +1,66 @@
+﻿@page "/gridfilterrow"
+@using System.ComponentModel.DataAnnotations
+
+<TelerikGrid Data=@GridData FilterMode="Telerik.Blazor.GridFilterMode.FilterRow"
+Pageable="true" Height="400px" EditMode="@GridEditMode.Popup" OnUpdate="@MyUpdateHandler"
+ >
+    <GridColumns>
+        <GridColumn Field=@nameof(Employee.Name) />
+        <GridColumn Field=@nameof(Employee.AgeInYears) Title="Age" />
+        <GridColumn Field=@nameof(Employee.HireDate) Title="Hire Date" />
+        <GridColumn Field=@nameof(Employee.IsOnLeave) Title="On Vacation" />
+        <GridCommandColumn>
+            <GridCommandButton Command="Edit" Icon="edit">Edit</GridCommandButton>
+            <GridCommandButton Command="Save" Icon="save" ShowInEdit="true" OnClick="@CustomSaveClick">Update</GridCommandButton>
+            <GridCommandButton Command="Cancel" Icon="cancel" ShowInEdit="true">Cancel</GridCommandButton>
+            <GridCommandButton Command="MyOwnCommand" Icon="information" ShowInEdit="false" OnClick="@MyCustomCommandHandler">My Command</GridCommandButton>
+        </GridCommandColumn>
+    </GridColumns>
+</TelerikGrid>
+
+@code {
+    public List<Employee> GridData { get; set; }
+
+    protected override void OnInitialized()
+    {
+        GridData = new List<Employee>();
+        var rand = new Random();
+        for (int i = 0; i < 100; i++)
+        {
+            GridData.Add(new Employee()
+                {
+                    EmployeeId = i,
+                    Name = "Employee " + i.ToString(),
+                    AgeInYears = rand.Next(10, 80),
+                    HireDate = DateTime.Now.Date.AddDays(rand.Next(-20, 20)),
+                    IsOnLeave = i % 3 == 0
+                });
+        }
+    }
+
+    async Task CustomSaveClick(GridCommandEventArgs e)
+    {
+        Console.WriteLine(e);
+    }
+
+    private async Task MyUpdateHandler(GridCommandEventArgs e)
+    {
+        Console.WriteLine(e);
+    }
+
+    async Task MyCustomCommandHandler(GridCommandEventArgs e)
+    {
+        Console.WriteLine(e);
+    }
+
+
+    public class Employee
+    {
+        public int? EmployeeId { get; set; }
+        public string Name { get; set; }
+        public int? AgeInYears { get; set; }
+        [DisplayFormat(DataFormatString = "{0:dd MMM yy}")]
+        public DateTime HireDate { get; set; }
+        public bool IsOnLeave { get; set; }
+    }
+}

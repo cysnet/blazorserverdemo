@@ -1,0 +1,42 @@
+﻿@page "/gridsearchbox"
+
+<TelerikGrid Data=@GridData Pageable="true" Height="400px">
+    <GridToolBar>
+        <span class="k-toolbar-spacer"></span> @* add this spacer to keep the searchbox on the right *@
+        <Telerik.Blazor.Components.GridSearchBox />
+    </GridToolBar>
+    <GridColumns>
+        <GridColumn Field="@(nameof(Employee.EmployeeId))" />
+        <GridColumn Field=@nameof(Employee.Name) />
+        <GridColumn Field=@nameof(Employee.Team) Title="Team" />
+        <GridColumn Field=@nameof(Employee.IsOnLeave) Title="On Vacation" />
+    </GridColumns>
+</TelerikGrid>
+
+@code {
+    public List<Employee> GridData { get; set; }
+
+    protected override void OnInitialized()
+    {
+        GridData = new List<Employee>();
+        var rand = new Random();
+        for (int i = 0; i < 15; i++)
+        {
+            GridData.Add(new Employee()
+            {
+                EmployeeId = i,
+                Name = "Employee " + i.ToString(),
+                Team = "Team " + i % 3,
+                IsOnLeave = i % 2 == 0
+            });
+        }
+    }
+
+    public class Employee
+    {
+        public int EmployeeId { get; set; }
+        public string Name { get; set; }
+        public string Team { get; set; }
+        public bool IsOnLeave { get; set; }
+    }
+}
