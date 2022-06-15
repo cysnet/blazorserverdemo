@@ -92,12 +92,12 @@
                                         <SfProgressBar Type="ProgressType.Linear" Height="40"
                                                Width="100%" ID="Acutal"
                                                TrackThickness="24"
-                                               ProgressThickness="24" Role="ModeType.Warning"
+                                               ProgressThickness="24"
                                                ShowProgressValue="true"
-                                               Value="value" Minimum="0" Maximum="125"
+                                               Value="125" Minimum="0" Maximum="125" ProgressColor="#ff6358"
                                                Theme="@Theme.Bootstrap5"
-                                               TrackColor="#969696">
-                                            <ProgressBarLabelStyle Text="Over 125 in stock" TextAlignment="TextAlignmentType.Center" Color="#FFFFFF" />
+                                               TrackColor="#eee">
+                                            <ProgressBarLabelStyle Text="Over 125 in stock" TextAlignment="TextAlignmentType.Center" Color="white" />
                                         </SfProgressBar>
                                     }
                                     else
@@ -105,12 +105,12 @@
                                         <SfProgressBar Type="ProgressType.Linear" Height="40"
                                                Width="100%" ID="Acutal"
                                                TrackThickness="24"
-                                               ProgressThickness="24" Role="ModeType.Warning"
+                                               ProgressThickness="24"
                                                ShowProgressValue="true"
-                                               Value="value" Minimum="0" Maximum="125"
+                                               Value="value" Minimum="0" Maximum="125" ProgressColor="#ff6358"
                                                Theme="@Theme.Bootstrap5"
-                                               TrackColor="#969696">
-                                            <ProgressBarLabelStyle Text="@(value+"")" TextAlignment="TextAlignmentType.Center" Color="#000000" />
+                                               TrackColor="#eee">
+                                            <ProgressBarLabelStyle Text="@(value+"")" TextAlignment="TextAlignmentType.Center" Color="white" />
                                         </SfProgressBar>
 
                                     }
