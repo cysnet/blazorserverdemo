@@ -13,17 +13,17 @@
 
 @*
     CUD             https://blazor.syncfusion.com/documentation/datagrid/editing
-    ConfirmDelete   https://docs.telerik.com/blazor-ui/components/grid/editing/built-in-dialogs/delete-confirmation
-    Pageable        https://docs.telerik.com/blazor-ui/components/grid/paging
-    Groupable       https://docs.telerik.com/blazor-ui/components/grid/grouping/overview
-    Sortable        https://docs.telerik.com/blazor-ui/components/grid/sorting
-    FilterMode      https://docs.telerik.com/blazor-ui/components/grid/filter/overview
-    Resizable       https://docs.telerik.com/blazor-ui/components/grid/columns/resize
-    Reorderable     https://docs.telerik.com/blazor-ui/components/grid/columns/reorder
-    SelectionMode   https://docs.telerik.com/blazor-ui/components/grid/selection/overview
-    OnStateInit     https://docs.telerik.com/blazor-ui/components/grid/state
-    Template        https://docs.telerik.com/blazor-ui/components/grid/templates/column
-    Globalization   https://docs.telerik.com/blazor-ui/globalization/localization
+    ConfirmDelete   https://blazor.syncfusion.com/documentation/datagrid/in-line-editing#confirmation-dialog
+    Pageable        https://blazor.syncfusion.com/documentation/datagrid/paging
+    Groupable       https://blazor.syncfusion.com/documentation/datagrid/grouping
+    Sortable        https://blazor.syncfusion.com/documentation/datagrid/sorting
+    FilterMode      https://blazor.syncfusion.com/documentation/datagrid/filtering
+    Resizable       https://blazor.syncfusion.com/documentation/datagrid/column-resizing
+    Reorderable     https://blazor.syncfusion.com/documentation/datagrid/column-reorder
+    SelectionMode   https://blazor.syncfusion.com/documentation/datagrid/selection#checkbox-selection
+    Event           https://blazor.syncfusion.com/documentation/datagrid/events
+    Template        https://blazor.syncfusion.com/documentation/datagrid/templates
+    Globalization   https://blazor.syncfusion.com/documentation/datagrid/global-local
 
 *@
 
@@ -31,47 +31,18 @@
     <div class="content-wrapper">
         <div class="row">
             <div id="container">
-                <SfGrid @ref="Grid" DataSource="@Products" EnableHeaderFocus="true" AllowGrouping="true"
-                        AllowSelection="true" AllowSorting="true" AllowFiltering="true"
+                <SfGrid @ref="Grid" DataSource="@Products" EnableHeaderFocus="true" AllowGrouping="true" AllowReordering="true" 
+                        AllowSelection="true" AllowSorting="true" AllowFiltering="true" AllowPaging="true" AllowResizing="true"
                         EnableVirtualization="true" EnableHover="false" Height="600" RowHeight="38"
-                Toolbar="@(new List<string>() { "Add"})">
-                    <GridGroupSettings Columns="@GroupedColumns"></GridGroupSettings>
-                    <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
-                    <GridPageSettings PageSize="40"></GridPageSettings>
-                    <GridSelectionSettings CheckboxOnly="true" PersistSelection="true" Type="SelectionType.Multiple"></GridSelectionSettings>
-                    <GridEditSettings AllowAdding="true" AllowDeleting="true" AllowEditing="true" Mode="EditMode.Dialog">
-                        @* <Template>
-                            @{
-                            var product = (context as ProductDto);
-                            <div>
-
-                            <div class="mb-4">
-                            <label>ProductName</label>
-                            <SfTextBox ID="ProductName" @bind-Value="@(product.ProductName)"></SfTextBox>
-                            </div>
-                            <div class="mb-4">
-                            <label>UnitPrice</label>
-                            <SfNumericTextBox ID="UnitPrice" @bind-Value="@(product.UnitPrice)"></SfNumericTextBox>
-                            </div>
-                            <div class="mb-4">
-                            <label>Category</label>
-                            <SfDropDownList ID="Category" @bind-Value="@(product.CategoryId)"  TItem="CategoryDto" TValue="int?" DataSource="@Categories">
-                            <DropDownListFieldSettings Value="CategoryId" Text="CategoryName"></DropDownListFieldSettings>
-                            </SfDropDownList>
-                            </div>
-                            <div class="mb-4">
-                            <label>UnitsInStock</label>
-                            <SfNumericTextBox ID="UnitsInStock" @bind-Value="@(product.UnitsInStock)"></SfNumericTextBox>
-                            </div>
-                            <div class="mb-4">
-                            <label>QuantityPerUnit</label>
-                            <SfTextBox ID="QuantityPerUnit" @bind-Value="@(product.QuantityPerUnit)"></SfTextBox>
-                            </div>
-                            </div>
-                            }
-                            </Template>*@
+                        Toolbar="@(new List<string>() { "Add"})">
+                    <GridEditSettings AllowAdding="true" AllowDeleting="true" AllowEditing="true" Mode="EditMode.Dialog" ShowDeleteConfirmDialog="true">
                     </GridEditSettings>
                     <GridEvents OnActionBegin="ActionBeginHandler" TValue="ProductDto"></GridEvents>
+                    <GridPageSettings PageSize="40"></GridPageSettings>
+                    <GridGroupSettings Columns="@GroupedColumns"></GridGroupSettings>
+                    <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
+                    
+                    <GridSelectionSettings CheckboxOnly="true" PersistSelection="true" Type="SelectionType.Multiple"></GridSelectionSettings>
                     <GridColumns>
                         <GridColumn Type="ColumnType.CheckBox" AllowFiltering="false" AllowSorting="false" Width="60"></GridColumn>
                         <GridColumn Field=@nameof(ProductDto.ProductName) HeaderText="ProductName" Width="130"></GridColumn>
@@ -194,14 +165,16 @@
         {
             if (Args.Action == "Add")
             {
+                Args.Data.CategoryName = Categories.FirstOrDefault(c => c.CategoryId == Args.Data.CategoryId)?.CategoryName;
                 ProductService.CreateProduct(Args.Data);
             }
             else
             {
+                Args.Data.CategoryName = Categories.FirstOrDefault(c => c.CategoryId == Args.Data.CategoryId)?.CategoryName;
                 ProductService.UpdateProduct(Args.Data);
-                
+
             }
-             Grid.CloseEditAsync();
+            Grid.CloseEditAsync();
             LoadData();
         }
         if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Delete))
