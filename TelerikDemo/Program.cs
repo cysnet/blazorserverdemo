@@ -16,27 +16,9 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddTelerikBlazor();
 builder.Services.AddCommonLibService();
-builder.Services.AddSingleton(typeof(ITelerikStringLocalizer), typeof(SampleResxLocalizer));
-builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
-builder.Services.Configure<RequestLocalizationOptions>(options =>
-{
-    // define the list of cultures your app will support
-    var supportedCultures = new List<CultureInfo>()
-            {
-                new CultureInfo("zh-CN"),
-                new CultureInfo("de-DE"),
-                new CultureInfo("es-ES"),
-                new CultureInfo("bg-BG")
-            };
-
-    // set the default culture
-    options.DefaultRequestCulture = new RequestCulture("zh-CN");
-
-    options.SupportedCultures = supportedCultures;
-    options.SupportedUICultures = supportedCultures;
-});
+//builder.Services.AddSingleton(typeof(ITelerikStringLocalizer), typeof(SampleResxLocalizer));
+//builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 var app = builder.Build();
-//app.UseRequestLocalization(app.Services.GetService<IOptions<RequestLocalizationOptions>>().Value);
 //app.UseRequestLocalization("zh-CN");
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
