@@ -33,8 +33,7 @@
             <div id="container">
                 <SfGrid @ref="Grid" DataSource="@Products" EnableHeaderFocus="true" AllowGrouping="true" AllowReordering="true" 
                         AllowSelection="true" AllowSorting="true" AllowFiltering="true" AllowPaging="true" AllowResizing="true"
-                        EnableVirtualization="true" EnableHover="false" Height="600" RowHeight="38"
-                        Toolbar="@(new List<string>() { "Add"})">
+                        RowHeight="38" Toolbar="@(new List<string>() { "Add"})">
                     <GridEditSettings AllowAdding="true" AllowDeleting="true" AllowEditing="true" Mode="EditMode.Dialog" ShowDeleteConfirmDialog="true">
                     </GridEditSettings>
                     <GridEvents OnActionBegin="ActionBeginHandler" TValue="ProductDto"></GridEvents>
