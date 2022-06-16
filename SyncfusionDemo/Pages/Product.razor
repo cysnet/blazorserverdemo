@@ -31,16 +31,16 @@
     <div class="content-wrapper">
         <div class="row">
             <div id="container">
-                <SfGrid @ref="Grid" DataSource="@Products" EnableHeaderFocus="true" AllowGrouping="true" AllowReordering="true" 
+                <SfGrid @ref="Grid" DataSource="@Products" EnableHeaderFocus="true" AllowGrouping="true" AllowReordering="true"
                         AllowSelection="true" AllowSorting="true" AllowFiltering="true" AllowPaging="true" AllowResizing="true"
                         RowHeight="38" Toolbar="@(new List<string>() { "Add"})">
                     <GridEditSettings AllowAdding="true" AllowDeleting="true" AllowEditing="true" Mode="EditMode.Dialog" ShowDeleteConfirmDialog="true">
                     </GridEditSettings>
-                    <GridEvents OnActionBegin="ActionBeginHandler" TValue="ProductDto"></GridEvents>
+                    <GridEvents OnActionBegin="ActionBeginHandler" OnActionComplete="ActionCompleteHandler" TValue="ProductDto"></GridEvents>
                     <GridPageSettings PageSize="40"></GridPageSettings>
                     <GridGroupSettings Columns="@GroupedColumns"></GridGroupSettings>
                     <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
-                    
+
                     <GridSelectionSettings CheckboxOnly="true" PersistSelection="true" Type="SelectionType.Multiple"></GridSelectionSettings>
                     <GridColumns>
                         <GridColumn Type="ColumnType.CheckBox" AllowFiltering="false" AllowSorting="false" Width="60"></GridColumn>
@@ -166,20 +166,28 @@
             {
                 Args.Data.CategoryName = Categories.FirstOrDefault(c => c.CategoryId == Args.Data.CategoryId)?.CategoryName;
                 ProductService.CreateProduct(Args.Data);
+                Grid.CloseEditAsync();
             }
             else
             {
                 Args.Data.CategoryName = Categories.FirstOrDefault(c => c.CategoryId == Args.Data.CategoryId)?.CategoryName;
                 ProductService.UpdateProduct(Args.Data);
-
+                LoadData();
+                Grid.CloseEditAsync();
             }
-            Grid.CloseEditAsync();
-            LoadData();
         }
         if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Delete))
         {
             ProductService.DeleteProduct(Args.Data);
             LoadData();
+        }
+    }
+    public void ActionCompleteHandler(ActionEventArgs<ProductDto> Args)
+    {
+
+        if (Args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
+        {
+            LoadData();//to fetch the updated data from db to Grid
         }
     }
 }

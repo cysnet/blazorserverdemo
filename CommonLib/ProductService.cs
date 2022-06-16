@@ -32,6 +32,7 @@ namespace CommonLib
             p.QuantityPerUnit = product.QuantityPerUnit;
             p.CategoryName = p.Category.CategoryName;
             p.CategoryDescription = p.Category.Description;
+            p.Discontinued = product.Discontinued;
             _dbContext.Add(p);
             _dbContext.SaveChanges();
         }
@@ -46,6 +47,7 @@ namespace CommonLib
             p.QuantityPerUnit = product.QuantityPerUnit;
             p.CategoryName = p.Category.CategoryName;
             p.CategoryDescription = p.Category.Description;
+            p.Discontinued = product.Discontinued;
             _dbContext.SaveChanges();
 
   
