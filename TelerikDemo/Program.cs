@@ -37,7 +37,7 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
 });
 var app = builder.Build();
 //app.UseRequestLocalization(app.Services.GetService<IOptions<RequestLocalizationOptions>>().Value);
-app.UseRequestLocalization("zh-CN");
+//app.UseRequestLocalization("zh-CN");
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
